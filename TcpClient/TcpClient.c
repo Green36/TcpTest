@@ -17,10 +17,11 @@
 
 #define PORT "5000"
 
+#define DEBUG_LOG printf("%s(%d)\n", __FUNCTION__, __LINE__);
 #define ERROR_RETURN \
     { \
         printf("%s(%d)\n", __FUNCTION__, __LINE__ ); \
-        return -1; \
+        goto Finalize; \
     }
 
 
@@ -75,31 +76,43 @@ int connect_to_server(
     }
     freeaddrinfo(res);
     return sockfd;
+
+Finalize:
+    return -1;
 }
 
 
 int main()
 {
     int sockfd;
-    char ch;
-
+    char buff[255];
     char hostname[128];
 
     gethostname(hostname , sizeof(hostname) );
     printf("%s\n", hostname);
 
-    sockfd = connect_to_server(hostname, PORT);
-    if (sockfd < 0) {
-        perror("client");
-        return 1;
-    }
+    for(;;)
+    {
+        sockfd = connect_to_server(hostname, PORT);
+        if (sockfd < 0) {
+            perror("client");
+            return 1;
+        }
 
-    ch = 'A';
-    if( write(sockfd, &ch, 1) < 0 ) ERROR_RETURN;
-    if( read(sockfd, &ch, 1) < 0 ) ERROR_RETURN;
-    printf("char from server = '%c'\n", ch);
+        memset(buff, 0x00, sizeof(buff));
+        printf("> ");
+        if( scanf("%s", buff ) == EOF ) ERROR_RETURN;
+        if( write(sockfd, buff, sizeof(buff)) < 0 ) ERROR_RETURN;
+        if( read(sockfd, buff, sizeof(buff)) < 0 ) ERROR_RETURN;
+        printf("from server = '%s'\n", buff);
+    }
 
     close(sockfd);
     return 0;
+
+Finalize:
+    perror("client");
+    close(sockfd);
+    return -1;
 }
 

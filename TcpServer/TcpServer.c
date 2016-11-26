@@ -79,6 +79,7 @@ int tcp_listen(const char* service)
 
 int test_server(){
     int sockfd;
+    char buff[1024];
 
     sockfd = tcp_listen(PORT);
     if (sockfd < 0) {
@@ -103,16 +104,15 @@ int test_server(){
         printf("accepted.\n");
         sockaddr_print("peer", (struct sockaddr*) &sa, len);
 
-
         if (fork() == 0)
         {
+            memset(buff, 0x00, sizeof(buff));
+
             // 子プロセス
-            char ch;
             close(sockfd);
 
-            if( read(cs, &ch, 1) < 0) ERROR_RETURN;
-            ch++;
-            if( write(cs, &ch, 1) < 0) ERROR_RETURN;
+            if( read(cs, &buff, 1) < 0) ERROR_RETURN;
+            if( write(cs, &buff, 1) < 0) ERROR_RETURN;
 
             close(cs);
             exit(0);
