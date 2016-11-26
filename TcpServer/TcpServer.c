@@ -16,7 +16,7 @@
 #include <errno.h>
 
 #define BACKLOG 5
-#define PORT "12345"
+#define PORT "5000"
 
 #define ERROR_RETURN \
     { \
