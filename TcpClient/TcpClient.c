@@ -21,7 +21,7 @@
 #define ERROR_RETURN \
     { \
         printf("%s(%d)\n", __FUNCTION__, __LINE__ ); \
-        goto Finalize; \
+        goto ErrorReturn; \
     }
 
 
@@ -77,7 +77,7 @@ int connect_to_server(
     freeaddrinfo(res);
     return sockfd;
 
-Finalize:
+ErrorReturn:
     return -1;
 }
 
@@ -110,7 +110,7 @@ int main()
     close(sockfd);
     return 0;
 
-Finalize:
+ErrorReturn:
     perror("client");
     close(sockfd);
     return -1;

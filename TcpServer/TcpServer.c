@@ -21,7 +21,7 @@
 #define ERROR_RETURN \
     { \
         printf("%s(%d)\n", __FUNCTION__, __LINE__ ); \
-        return -1; \
+        goto ErrorReturn; \
     }
 
 void sock_print(char* str, int family, int socktype)
@@ -75,6 +75,9 @@ int tcp_listen(const char* service)
 
     freeaddrinfo(res);
     return sockfd;
+
+ErrorReturn:
+    return -1;
 }
 
 int test_server(){
@@ -120,6 +123,9 @@ int test_server(){
         close(cs);
     }
     return 0;
+
+ErrorReturn:
+    return -1;
 }
 
 int main()
