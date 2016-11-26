@@ -18,6 +18,12 @@
 #define BACKLOG 5
 #define PORT "12345"
 
+#define ERROR_RETURN \
+    { \
+        printf("%s(%d)\n", __FUNCTION__, __LINE__ ); \
+        return -1; \
+    }
+
 void sock_print(char* str, int family, int socktype)
 {
 
@@ -77,7 +83,7 @@ int tcp_listen(const char* service)
     return sockfd;
 }
 
-void test_server(){
+int test_server(){
     int sockfd;
 
     sockfd = tcp_listen(PORT);
@@ -110,15 +116,16 @@ void test_server(){
             char ch;
             close(sockfd);
 
-            read(cs, &ch, 1);
+            if( read(cs, &ch, 1) < 0) ERROR_RETURN;
             ch++;
-            write(cs, &ch, 1);
+            if( write(cs, &ch, 1) < 0) ERROR_RETURN;
 
             close(cs);
             exit(0);
         }
         close(cs);
     }
+    return 0;
 }
 
 int main()

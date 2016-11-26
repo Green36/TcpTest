@@ -17,6 +17,13 @@
 
 #define PORT "5000"
 
+#define ERROR_RETURN \
+    { \
+        printf("%s(%d)\n", __FUNCTION__, __LINE__ ); \
+        return -1; \
+    }
+
+
 void sock_print(char* str, int family, int socktype)
 {
 
@@ -87,8 +94,8 @@ int main()
     }
 
     ch = 'A';
-    write(sockfd, &ch, 1);
-    read(sockfd, &ch, 1);
+    if( write(sockfd, &ch, 1) < 0 ) ERROR_RETURN;
+    if( read(sockfd, &ch, 1) < 0 ) ERROR_RETURN;
     printf("char from server = '%c'\n", ch);
 
     close(sockfd);
