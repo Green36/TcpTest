@@ -60,24 +60,18 @@ int tcp_listen(const char* service)
     ai = res;
     sock_print("create socket", ai->ai_family, ai->ai_socktype);
     sockfd = socket(ai->ai_family, ai->ai_socktype, ai->ai_protocol);
-    if (sockfd < 0)
-        return -1;
-
-
+    if (sockfd < 0) ERROR_RETURN;
 
     int on = 1;
-    if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) < 0)
-        return -1;
-    else
-        printf("set SO_REUSEADDR\n");
+    if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) < 0) ERROR_RETURN;
 
-    if (bind(sockfd, ai->ai_addr, ai->ai_addrlen) < 0)
-        return -1;
+    printf("set SO_REUSEADDR\n");
 
-    if (listen(sockfd, BACKLOG) < 0)
-        return -1;
-    else
-        sockaddr_print("listen succeeded", ai->ai_addr, ai->ai_addrlen);
+    if (bind(sockfd, ai->ai_addr, ai->ai_addrlen) < 0) ERROR_RETURN;
+
+    if (listen(sockfd, BACKLOG) < 0) ERROR_RETURN;
+
+    sockaddr_print("listen succeeded", ai->ai_addr, ai->ai_addrlen);
 
     freeaddrinfo(res);
     return sockfd;

@@ -55,16 +55,17 @@ int connect_to_server(
     err = getaddrinfo(hostname, service, &hints, &res);
     if (err != 0) {
         printf("getaddrinfo(): %s\n", gai_strerror(err));
-        return -1;
+        ERROR_RETURN;
     }
 
     for (ai = res; ai; ai = ai->ai_next) {
         sockaddr_print("connect...", ai->ai_addr, ai->ai_addrlen);
         sockfd = socket(ai->ai_family, ai->ai_socktype, ai->ai_protocol);
-        if (sockfd < 0)
-            return -1;
+        if (sockfd < 0) ERROR_RETURN;
+
         if (connect(sockfd, ai->ai_addr, ai->ai_addrlen) < 0) {
             close(sockfd);
+            printf("%s(%d) connect error\n", __FUNCTION__, __LINE__ );
             sockfd = -1;
             continue;
         }
