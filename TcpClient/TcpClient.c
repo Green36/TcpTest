@@ -1,6 +1,3 @@
-//
-// http://www.nslabs.jp/socket.rhtml
-//
 
 #include <sys/types.h>
 #include <sys/socket.h>
